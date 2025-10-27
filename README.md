@@ -89,11 +89,17 @@ Expected Behavior
 
 ## Topics Overview
 /scan — LiDAR LaserScan data
+
 /depth_camera/* — Depth camera images & point cloud
+
 /sam_bot/cmd_vel — Velocity commands (manual or Nav2)
+
 /sam_bot/odom — Odometry from differential drive
+
 /map — Occupancy grid map (SLAM or static)
+
 /tf, /tf_static — Frame transforms for robot & world
+
 
 ## Notes
 - Use use_sim_time:=true whenever working with Gazebo simulation.
