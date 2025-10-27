@@ -12,7 +12,7 @@ Ensure that:
 
 ```bash
 cd ~/ros2_ws
-colcon build
+colcon build --packages-select sam_bot_description
 source install/setup.bash
 ````
 
