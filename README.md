@@ -1,4 +1,4 @@
-# sam_bot_navigation_setup
+# sam_bot navigation Setup
 
 ## Overview
 This package sets up a complete ROS 2 navigation pipeline for the sam_bot differential drive robot in Gazebo Classic.
