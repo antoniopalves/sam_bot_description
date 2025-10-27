@@ -11,9 +11,15 @@ def generate_launch_description():
     pkg_share = FindPackageShare(package='sam_bot_description').find('sam_bot_description')
     default_model_path = os.path.join(pkg_share, 'urdf', 'sam_bot.xacro')
     default_rviz_config_path = os.path.join(pkg_share, 'rviz', 'config.rviz')
-    world_path = os.path.join(pkg_share, 'worlds', 'my_world.sdf')
+    default_world_path = os.path.join(pkg_share, 'worlds', 'trsa_two_rooms.world')
 
-    # Robot State Publisher
+    # Launch arguments
+    gui_arg = DeclareLaunchArgument('gui', default_value='True', description='Enable joint_state_publisher_gui')
+    model_arg = DeclareLaunchArgument('model', default_value=default_model_path, description='Path to robot model')
+    rviz_arg = DeclareLaunchArgument('rvizconfig', default_value=default_rviz_config_path, description='Path to RViz config')
+    world_arg = DeclareLaunchArgument('world', default_value=default_world_path, description='Path to world file')
+
+    # Nodes
     robot_state_publisher_node = Node(
         package='robot_state_publisher',
         executable='robot_state_publisher',
@@ -23,81 +29,58 @@ def generate_launch_description():
         }]
     )
 
-    # Joint State Publisher (non-GUI)
     joint_state_publisher_node = Node(
         package='joint_state_publisher',
         executable='joint_state_publisher',
-        name='joint_state_publisher',
         parameters=[{
-            'robot_description': Command(['xacro ', default_model_path]),
+            'robot_description': Command(['xacro ', LaunchConfiguration('model')]),
             'use_sim_time': True
         }],
         condition=UnlessCondition(LaunchConfiguration('gui'))
     )
 
-    # Joint State Publisher GUI
     joint_state_publisher_gui_node = Node(
         package='joint_state_publisher_gui',
         executable='joint_state_publisher_gui',
-        name='joint_state_publisher_gui',
         parameters=[{'use_sim_time': True}],
         condition=IfCondition(LaunchConfiguration('gui'))
     )
 
-    # RViz
     rviz_node = Node(
         package='rviz2',
         executable='rviz2',
-        name='rviz2',
-        output='screen',
-        arguments=['-d', LaunchConfiguration('rvizconfig')],
+        arguments=['-d', ''],  # abre RViz sem ficheiro de configuração
+        output='screen'
     )
 
-    # Gazebo process
+
     gazebo_process = ExecuteProcess(
         cmd=[
-            'gazebo',
-            '--verbose',
+            'gazebo', '--verbose',
             '-s', 'libgazebo_ros_init.so',
             '-s', 'libgazebo_ros_factory.so',
-            world_path
+            LaunchConfiguration('world')
         ],
         output='screen'
     )
 
-    # Spawn entity in Gazebo
     spawn_entity = Node(
         package='gazebo_ros',
         executable='spawn_entity.py',
         arguments=[
             '-topic', 'robot_description',
             '-entity', 'sam_bot',
-            '-x', '0',
-            '-y', '0',
-            '-z', '0.0',
-            '-Y', '3.14159'  # 180 degrees rotation around Z
+            '-x', '0', '-y', '0', '-z', '0.0',
+            '-Y', '3.14159'
         ],
         output='screen'
     )
 
-
-    # Launch description
     return LaunchDescription([
-        DeclareLaunchArgument(
-            name='gui',
-            default_value='True',
-            description='Enable joint_state_publisher_gui'
-        ),
-        DeclareLaunchArgument(
-            name='model',
-            default_value=default_model_path,
-            description='Path to robot model'
-        ),
-        DeclareLaunchArgument(
-            name='rvizconfig',
-            default_value=default_rviz_config_path,
-            description='Path to RViz config'
-        ),
+        gui_arg,
+        model_arg,
+        rviz_arg,
+        world_arg,
         joint_state_publisher_node,
         joint_state_publisher_gui_node,
         robot_state_publisher_node,
