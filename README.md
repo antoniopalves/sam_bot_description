@@ -10,9 +10,11 @@ Ensure that:
 - Gazebo Classic and gazebo_ros_pkgs are installed.
 - The workspace has been built and sourced:
 
+```bash
 cd ~/ros2_ws
 colcon build
 source install/setup.bash
+````
 
 ## 1. Launch the Robot in Gazebo + RViz
 ros2 launch sam_bot_description display.launch.py
@@ -23,7 +25,10 @@ Purpose:
 - Starts the robot_state_publisher and joint_state_publisher.
 
 ## 2. Run SLAM Toolbox (Online Mapping)
+
+```bash
 ros2 launch slam_toolbox online_async_launch.py use_sim_time:=true
+````
 
 Purpose:
 - Starts real-time SLAM (Simultaneous Localization and Mapping).
@@ -31,7 +36,10 @@ Purpose:
 - Publishes map and pose transforms (/map → /odom → /base_footprint).
 
 ## 3. Launch the Navigation Stack (Nav2)
+
+```bash
 ros2 launch nav2_bringup navigation_launch.py use_sim_time:=true
+````
 
 Purpose:
 - Initializes Nav2 components:
@@ -43,14 +51,20 @@ Purpose:
 - Uses the SLAM map in real time.
 
 ## 4. Visualize Costmaps in RViz
+
+```bash
 ros2 run nav2_costmap_2d nav2_costmap_2d_markers voxel_grid:=/local_costmap/voxel_grid visualization_marker:=/my_marker
+````
 
 Purpose:
 - Publishes RViz visualization markers for the 3D voxel grid layers of the costmap.
 - Useful to debug obstacle inflation, sensor coverage, and costmap generation.
 
 ## 5. Control the Robot Manually
+
+```bash
 ros2 run teleop_twist_keyboard teleop_twist_keyboard cmd_vel:=/sam_bot/cmd_vel
+````
 
 Purpose:
 - Allows manual movement of the robot using keyboard commands (W, A, S, D).
@@ -58,7 +72,11 @@ Purpose:
 
 ## 6. Saving the Map
 Once you have explored the world and built the map:
+
+```bash
 ros2 run nav2_map_server map_saver_cli -f ~/mapa_sam_bot
+````
+
 This generates:
 mapa_sam_bot.yaml
 mapa_sam_bot.pgm
