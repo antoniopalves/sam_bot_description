@@ -123,30 +123,30 @@
   </joint>
 
   <!-- Differential Drive Plugin -->
-  <gazebo>
-    <plugin name="diff_drive" filename="libgazebo_ros_diff_drive.so">
-      <ros>
-        <namespace>/sam_bot</namespace>
-        <remapping>cmd_vel:=cmd_vel</remapping>
-        <remapping>odom:=odom</remapping>
-      </ros>
-      <update_rate>50.0</update_rate>
-      <left_joint>drivewhl_l_joint</left_joint>
-      <right_joint>drivewhl_r_joint</right_joint>
-      <wheel_separation>${base_width}</wheel_separation>
-      <wheel_diameter>${2*wheel_radius}</wheel_diameter>
-      <odom_frame>odom</odom_frame>
-      <base_frame>base_footprint</base_frame>
-      <publish_odom>true</publish_odom>
-      <publish_odom_tf>true</publish_odom_tf>
-      <publish_wheel_tf>true</publish_wheel_tf>
-    </plugin>
-  </gazebo>
+<gazebo>
+  <plugin name="diff_drive" filename="libgazebo_ros_diff_drive.so">
+    <ros>
+      <remapping>cmd_vel:=/cmd_vel</remapping>
+      <remapping>odom:=/odom</remapping>
+    </ros>
+    <update_rate>50.0</update_rate>
+    <left_joint>drivewhl_l_joint</left_joint>
+    <right_joint>drivewhl_r_joint</right_joint>
+    <wheel_separation>${base_width}</wheel_separation>
+    <wheel_diameter>${2*wheel_radius}</wheel_diameter>
+    <odom_frame>odom</odom_frame>
+    <base_frame>base_footprint</base_frame>
+    <publish_odom>true</publish_odom>
+    <publish_odom_tf>true</publish_odom_tf>
+    <publish_wheel_tf>true</publish_wheel_tf>
+  </plugin>
+</gazebo>
+
 
   <!-- Reduce caster friction -->
   <gazebo reference="front_caster">
-    <mu1 value="0.001"/>
-    <mu2 value="0.001"/>
+    <mu1 value="0.5"/>
+    <mu2 value="0.5"/>
   </gazebo>
 
   <!-- IMU Sensor -->
