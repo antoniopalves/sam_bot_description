@@ -1,8 +1,17 @@
 # sam_bot navigation Setup
 
 ## Overview
-This package sets up a complete ROS 2 navigation pipeline for the sam_bot differential drive robot in Gazebo Classic.
-It includes visualization (RViz2), SLAM mapping (SLAM Toolbox), navigation (Nav2), costmap visualization, and manual teleoperation.
+
+This package provides a complete ROS 2 navigation and vision pipeline for the sam_bot differential-drive robot in Gazebo Classic.
+It integrates:
+
+Full robot simulation in Gazebo.
+
+Visualization in RViz 2.
+
+Autonomous navigation using Nav2.
+
+Real-time RGB cone detection via OpenCV
 
 ## Prerequisites
 Ensure that:
@@ -17,17 +26,21 @@ source install/setup.bash
 ````
 
 ## 1. Launch the Robot in Gazebo + RViz
-ros2 launch sam_bot_description display.launch.py
+
+```bash
+ros2 launch sam_bot_description display.launch.py use_sim_time:=true
+````
 
 Purpose:
 - Spawns the sam_bot in Gazebo using the custom my_world.sdf.
 - Opens RViz2 preconfigured for sensor and TF visualization.
 - Starts the robot_state_publisher and joint_state_publisher.
 
-## 2. Run SLAM Toolbox (Online Mapping)
+## 2. Run Nav2 Navigation Stack  (Online Mapping)
 
 ```bash
-ros2 launch slam_toolbox online_async_launch.py use_sim_time:=true
+ros2 launch nav2_bringup bringup_launch.py use_sim_time:=true \
+map:=/home/antoniopalves/trsa_two_rooms_map.yaml
 ````
 
 Purpose:
@@ -35,30 +48,39 @@ Purpose:
 - Builds a map from the LiDAR /scan topic while the robot moves.
 - Publishes map and pose transforms (/map → /odom → /base_footprint).
 
-## 3. Launch the Navigation Stack (Nav2)
+## 3. Run the Navigation Node
 
 ```bash
-ros2 launch nav2_bringup navigation_launch.py use_sim_time:=true
+ros2 run sam_bot_description navigation_node.py
 ````
 
 Purpose:
-- Initializes Nav2 components:
-  - planner_server (path planning)
-  - controller_server (velocity control)
-  - behavior_server (navigation behavior trees)
-  - bt_navigator (goal execution)
-  - costmaps (obstacle representation)
-- Uses the SLAM map in real time.
+- Automatically publishes the initial pose (/initialpose).
 
-## 4. Visualize Costmaps in RViz
+- Provides the /start_navigation service that sends a predefined goal.
+
+- Start navigation by calling:
 
 ```bash
-ros2 run nav2_costmap_2d nav2_costmap_2d_markers voxel_grid:=/local_costmap/voxel_grid visualization_marker:=/my_marker
+ros2 service call /start_navigation std_srvs/srv/Trigger "{}"
+````
+
+## 4. Run the Cone Detection Node
+
+```bash
+ros2 run sam_bot_description cone_detector.py
 ````
 
 Purpose:
-- Publishes RViz visualization markers for the 3D voxel grid layers of the costmap.
-- Useful to debug obstacle inflation, sensor coverage, and costmap generation.
+- Subscribes to the RGB camera topic (/depth_camera/image_raw).
+
+- Uses HSV color segmentation to detect orange-white striped cones.
+
+- Publishes boolean detections to /cone_detected.
+
+- Displays OpenCV windows:
+
+- Mask Orange, Mask White, Combined, and View with bounding boxes.
 
 ## 5. Control the Robot Manually
 
@@ -70,22 +92,16 @@ Purpose:
 - Allows manual movement of the robot using keyboard commands (W, A, S, D).
 - Movement data goes to the same topic Nav2 uses (/sam_bot/cmd_vel).
 
-## 6. Saving the Map
-Once you have explored the world and built the map:
-
-```bash
-ros2 run nav2_map_server map_saver_cli -f ~/mapa_sam_bot
-````
-
-This generates:
-mapa_sam_bot.yaml
-mapa_sam_bot.pgm
-
 Expected Behavior
-- SLAM Toolbox builds a live occupancy map.
-- Nav2 consumes this map for planning and control.
-- Teleop allows manual exploration.
-- After saving, the robot can localize and navigate autonomously within the saved map.
+
+The robot loads into the environment and localizes itself using AMCL.
+
+Calling /start_navigation triggers Nav2 to plan and follow a path to the goal.
+
+The cone detector highlights orange-white cones and reports detections.
+
+The vision node can later be extended to stop or reroute the robot upon cone detection.
+
 
 ## Topics Overview
 /scan — LiDAR LaserScan data
@@ -100,11 +116,6 @@ Expected Behavior
 
 /tf, /tf_static — Frame transforms for robot & world
 
-
-## Notes
-- Use use_sim_time:=true whenever working with Gazebo simulation.
-- If RViz shows “No map received”, ensure the map server is launched or SLAM is running.
-- Gazebo Classic reaches end-of-life January 2025 — consider migrating to Gazebo (Ignition) if needed.
 
 ## Author
 António Alves — MSc in Electrical and Computer Engineering (FCT NOVA)
