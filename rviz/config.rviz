@@ -10,7 +10,7 @@ Panels:
         - /PointCloud21
         - /Image1/Topic1
       Splitter Ratio: 0.5
-    Tree Height: 568
+    Tree Height: 422
 Visualization Manager:
   Class: ""
   Displays:
@@ -117,8 +117,6 @@ Visualization Manager:
           Value: true
         lidar_link:
           Value: true
-        map:
-          Value: true
         odom:
           Value: true
       Marker Scale: 0.30000001192092896
@@ -127,22 +125,20 @@ Visualization Manager:
       Show Axes: true
       Show Names: true
       Tree:
-        map:
-          {}
         odom:
           base_footprint:
             base_link:
               camera_link:
                 camera_depth_frame:
                   {}
+              drivewhl_l_link:
+                {}
+              drivewhl_r_link:
+                {}
               front_caster:
                 {}
               lidar_link:
                 {}
-            drivewhl_l_link:
-              {}
-            drivewhl_r_link:
-              {}
       Update Interval: 0
       Value: true
     - Alpha: 1
@@ -292,12 +288,12 @@ Visualization Manager:
 Window Geometry:
   Displays:
     collapsed: false
-  Height: 999
+  Height: 811
   Hide Left Dock: false
   Hide Right Dock: false
   Image:
     collapsed: false
-  QMainWindow State: 000000ff00000000fd00000001000000000000015600000391fc0200000002fb000000100044006900730070006c006100790073010000003b000002c1000000c700fffffffb0000000a0049006d0061006700650100000302000000ca0000002800ffffff000006180000039100000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
-  Width: 1908
-  X: -32
-  Y: -32
+  QMainWindow State: 000000ff00000000fd000000010000000000000156000002d5fc0200000002fb000000100044006900730070006c006100790073010000003b0000022f000000c700fffffffb0000000a0049006d0061006700650100000270000000a00000002800ffffff00000475000002d500000004000000040000000800000008fc0000000100000002000000010000000a0054006f006f006c00730100000000ffffffff0000000000000000
+  Width: 1489
+  X: 218
+  Y: 70
