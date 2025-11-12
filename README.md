@@ -5,13 +5,13 @@
 This package provides a complete ROS 2 navigation and vision pipeline for the sam_bot differential-drive robot in Gazebo Classic.
 It integrates:
 
-Full robot simulation in Gazebo.
+- Full robot simulation in Gazebo.
 
-Visualization in RViz 2.
+- Visualization in RViz 2.
 
-Autonomous navigation using Nav2.
+- Autonomous navigation using Nav2.
 
-Real-time RGB cone detection via OpenCV
+- Real-time RGB cone detection via OpenCV
 
 ## Prerequisites
 Ensure that:
